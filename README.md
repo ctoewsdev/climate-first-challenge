@@ -15,19 +15,48 @@ pip install -r requirements.txt
 
 ## Run
 
-From project root:
+From project root (set `PYTHONPATH=src` so imports resolve):
 
 ```bash
-python -m src.main
+PYTHONPATH=src python -m src.main
 ```
 
-Or from `src/`:
+Or from `src/` (no `PYTHONPATH` needed):
 
 ```bash
 cd src && python main.py
 ```
 
-Use `--no-clear` to keep previous outputs: `python -m src.main --no-clear`.
+Use `--no-clear` to keep previous outputs: `PYTHONPATH=src python -m src.main --no-clear` or `cd src && python main.py --no-clear`.
+
+#### Docker (optional)
+
+Build and run the pipeline in a container:
+
+```bash
+docker build -t climate-first-challenge .
+docker run --rm climate-first-challenge
+```
+
+To skip clearing output: `docker run --rm climate-first-challenge python main.py --no-clear`.
+
+To run tests: `docker run --rm climate-first-challenge python -m pytest ../tests/ -v` (container `WORKDIR` is `src/`, so tests live at `../tests/`).
+
+### Expected output
+
+On a successful run you should see:
+
+```
+Clearing output directory...
+Running pipeline...
+Processing layer 0...
+Processing layer 1...
+...
+Processing layer 6...
+Congratulations! All layers complete. Watch out for drop bears.
+```
+
+With `--no-clear`, the "Clearing output directory..." line is omitted. To confirm this output programmatically, run `pytest tests/ -v`; the main tests assert these messages.
 
 ## Tests
 
@@ -35,9 +64,17 @@ Use `--no-clear` to keep previous outputs: `python -m src.main --no-clear`.
 pytest tests/ -v
 ```
 
+Run from project root.
+
 ## CI
 
-GitHub Actions runs on push/PR (see [.github/workflows/ci.yml](.github/workflows/ci.yml)): install deps, run tests, run the pipeline. Use Python 3.10 and 3.12. Ensure `data/input/layer0_ascii85.txt` is committed so CI (and reviewers) can run the pipeline.
+GitHub Actions (see [.github/workflows/ci.yml](.github/workflows/ci.yml)):
+
+- **Every push/PR**: install deps, run tests (Python 3.10 and 3.12).
+- **Push to `main` or manual “Run workflow”**: run the pipeline.
+- **Manual “Run workflow” only**: build Docker image.
+
+Ensure `data/input/layer0_ascii85.txt` is committed so CI (and reviewers) can run the pipeline.
 
 ## Directory structure
 

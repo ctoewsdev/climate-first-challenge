@@ -1,0 +1,14 @@
+# Exclude unneeded files from the build context
+.git
+.gitignore
+__pycache__
+.pytest_cache
+.coverage
+htmlcov
+.venv
+venv
+env
+.dockerignore
+Dockerfile
+.github
+data/output

@@ -1,8 +1,7 @@
 """
-Layer 6: Tomtel Core i69 VM.
-
-Fetch–decode–execute loop over bytecode. Memory = bytecode; output is
-collected via OUT and returned when HALT. All values unsigned.
+Layer 6: Tomtel Core i69 VM. Fetch-decode-execute loop over bytecode.
+Memory = bytecode; output is collected via OUT and returned when HALT. All
+values unsigned.
 """
 from helpers import read_u8, read_u32_le, write_u8
 
@@ -14,54 +13,56 @@ def run_tomtel_vm(bytecode: bytes) -> bytes:
     mem = bytearray(bytecode)
     n = len(mem)
 
-    # 8‑bit: a,b,c,d,e,f. Index 0 unused; 1..6 = a..f; 7 = (ptr+c) pseudo-reg.
+    # 8-bit: a,b,c,d,e,f. Index 0 unused; 1..6 = a..f; 7 = (ptr+c) pseudo-reg.
     r8 = [0] * 7
-    # 32‑bit: la, lb, lc, ld, ptr, pc. Index 0 unused; 1..6 = la..pc.
+
+    # 32-bit: la, lb, lc, ld, ptr, pc. Index 0 unused; 1..6 = la..pc.
     r32 = [0] * 7
 
     out: list[int] = []
 
-    def pc() -> int:
+    def pc() -> int: # program counter (pc)
         return r32[6]
 
-    def set_pc(v: int) -> None:
+    def set_pc(v: int) -> None: # set program counter (pc)
         r32[6] = v & 0xFFFFFFFF
 
-    def ptr() -> int:
+    def ptr() -> int: # pointer (ptr)
         return r32[5]
 
-    def cursor_addr() -> int:
+    def cursor_addr() -> int: # cursor address (ptr + c)
         return (ptr() + r8[3]) & 0xFFFFFFFF  # ptr + c
 
-    def read8(reg: int) -> int:
+    def read8(reg: int) -> int: # read 8-bit register
         if 1 <= reg <= 6:
             return r8[reg]
         if reg == 7:
             return read_u8(mem, cursor_addr())
         return 0
 
-    def write8(reg: int, v: int) -> None:
+    def write8(reg: int, v: int) -> None: # write 8-bit register
         v = v & 0xFF
         if 1 <= reg <= 6:
             r8[reg] = v
         elif reg == 7:
             write_u8(mem, cursor_addr(), v)
 
-    def read32(reg: int) -> int:
+    def read32(reg: int) -> int: # read 32-bit register
         if 1 <= reg <= 6:
             return r32[reg]
         return 0
 
-    def write32(reg: int, v: int) -> None:
+    def write32(reg: int, v: int) -> None: # write 32-bit register
         v = v & 0xFFFFFFFF
         if 1 <= reg <= 6:
             r32[reg] = v
 
     while True:
-        addr = pc()
+        addr = pc() # get current program counter
         if addr < 0 or addr >= n:
             break
-        op = mem[addr]
+
+        op = mem[addr] # get current opcode
 
         if op == 0x01:  # HALT
             break
@@ -133,7 +134,8 @@ def run_tomtel_vm(bytecode: bytes) -> bytes:
                 write32(dest, imm32)
                 # Gotcha: when dest is pc (6), we just set pc to target. Do *not*
                 # advance pc (addr+5), or we overwrite the jump and fall through
-                # into data — e.g. "Unknown opcode 0x0F" when landing in non-instruction bytes.
+                # into data — e.g. "Unknown opcode 0x0F" when landing in
+                # non-instruction bytes.
                 if dest != 6:
                     set_pc(addr + 5)
             else:
@@ -142,6 +144,6 @@ def run_tomtel_vm(bytecode: bytes) -> bytes:
                     set_pc(addr + 1)
             continue
 
-        raise RuntimeError("Unknown opcode 0x{:02X} at pc=0x{:X}".format(op, addr))
+        raise RuntimeError("Unknown opcode 0x{:02X} at pc=0x{:X} (invalid instruction encoding)".format(op, addr))
 
     return bytes(out)

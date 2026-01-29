@@ -15,8 +15,8 @@ def decode_ascii85(payload: bytes) -> bytes:
     """
     Decode Adobe ASCII85-encoded bytes to raw bytes.
 
-    Uses adobe=True so that <~ and ~> are handled; input is expected to
-    include those delimiters when taken from layer output files.
+    Uses adobe=True so that the text markers <~ and ~> are handled; input is
+    expected to include those delimiters when taken from layer output files.
     """
     return base64.a85decode(payload, adobe=True)
 
@@ -26,8 +26,7 @@ def get_payload_from_layer_output(path: Path):
     Extract the ASCII85 payload block after '==[ Payload ]==' in a layer output file.
 
     Returns the raw ASCII85 block (including <~ and ~>) as a str. Callers must
-    decode via decode_ascii85; if the downstream expects bytes, encode to ASCII
-    first (e.g. .encode("ascii")).
+    decode via decode_ascii85.
     """
     text = path.read_text(encoding="utf-8")
     idx = text.find(PAYLOAD_MARKER)
@@ -47,7 +46,7 @@ def get_payload_from_layer_output(path: Path):
 
 
 def checksum(data: bytes) -> int:
-    """Standard internet (ones' complement) checksum. Pad odd length with 0."""
+    """Standard Internet checksum used by IPv4 and UDP (RFC 791 / RFC 768)."""
     if len(data) % 2 == 1:
         data += b"\x00"
     s = 0

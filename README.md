@@ -2,7 +2,7 @@
 
 This repo is my submission for a coding challenge, which I’m submitting as part of my job application. It implements the full pipeline (layers 0–6) from the challenge spec (https://www.tomdalling.com/toms-data-onion/)
 
-**AI tooling.** I used AI-assisted development (e.g. Cursor) for this challenge, in line with the instructions to disclose such use.
+**AI tooling.** I used AI-assisted development (ChatGPT and Cursor) for this challenge, in line with the instructions to disclose such use.
 
 ---
 

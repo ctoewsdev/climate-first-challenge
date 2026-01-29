@@ -1,23 +1,31 @@
-from __future__ import print_function
+"""
+Entry point for the climate-first coding challenge pipeline.
+Runs layers 0–6 in sequence: the output of one layer becomes the input for the
+next. All serious error handling and traceback printing happen here; the
+orchestrator raises RuntimeErrors with step context.
+"""
+from __future__ import print_function  # Py2/3-safe print(file=...); we use .format() not f-strings
+
 import argparse
-from pathlib import Path
 import sys
-
+import traceback
+from constants import OUTPUT_DIR
 from orchestrator import run_pipeline
-
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent
-_OUTPUT_DIR = _PROJECT_ROOT / "data" / "output"
 
 
 def _clear_output_dir():
-    """Remove all files in the output directory."""
-    if _OUTPUT_DIR.exists():
-        for f in _OUTPUT_DIR.iterdir():
+    """Remove all files in the output directory before a run."""
+    if OUTPUT_DIR.exists():
+        for f in OUTPUT_DIR.iterdir():
             if f.is_file():
                 f.unlink()
 
 
 def main(clear=True):
+    """
+    Entry point: optionally clear output dir, then run the pipeline.
+    On any exception, print error + traceback to stderr and exit 1.
+    """
     try:
         if clear:
             print("Clearing output directory...")
@@ -26,8 +34,15 @@ def main(clear=True):
         print("Running pipeline...")
         run_pipeline()
 
+        # Drop bear: classic Aussie tall tale — best enjoyed from a safe distance.
+        print("Congratulations! All layers complete. Watch out for drop bears.")
+
+
     except Exception as e:
+        # Single place for tracebacks: we catch at top level and print here.
+        # Orchestrator wraps per-step failures in RuntimeError with context.
         print("Error: {}".format(e), file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
         sys.exit(1)
 
 

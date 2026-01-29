@@ -25,7 +25,7 @@ from layers import (
 
 
 class _TimedStep:
-    """Context manager: time a block, set .elapsed on exit, print '  layer N done (Xs)'."""
+    """Context manager: time a block, set .elapsed on exit, print ' layer N done (Xs)'."""
 
     def __init__(self, layer_num):
         self.layer_num = layer_num

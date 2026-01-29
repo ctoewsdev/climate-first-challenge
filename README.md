@@ -1,8 +1,10 @@
 # climate-first-challenge
 
+**AI tooling.** I used AI-assisted development (ChatGPT and Cursor) for this challenge, in line with the instructions to disclose such use.
+
 ## Prerequisites
 
-- **Python 3.7+**
+- **Python 3.10+** (CI tests 3.10, 3.12, 3.14; Docker image uses 3.12)
 - Input file: `data/input/layer0_ascii85.txt` (included in repo)
 
 ## Setup
@@ -70,7 +72,7 @@ Run from project root.
 
 GitHub Actions (see [.github/workflows/ci.yml](.github/workflows/ci.yml)):
 
-- **Every push/PR**: install deps, run tests (Python 3.10 and 3.12).
+- **Every push/PR**: install deps, run tests (Python 3.10, 3.12, 3.14).
 - **Push to `main` or manual “Run workflow”**: run the pipeline.
 - **Manual “Run workflow” only**: build Docker image.
 

@@ -1,4 +1,4 @@
-# Optional: run the pipeline in Docker. Use Python 3.12 to align with CI.
+# Optional: run the pipeline in Docker. Python 3.12 (CI-tested; 3.10+ supported).
 FROM python:3.12-slim
 
 WORKDIR /app

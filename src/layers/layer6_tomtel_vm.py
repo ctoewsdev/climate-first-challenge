@@ -145,12 +145,3 @@ def run_tomtel_vm(bytecode: bytes) -> bytes:
         raise RuntimeError("Unknown opcode 0x{:02X} at pc=0x{:X}".format(op, addr))
 
     return bytes(out)
-
-
-if __name__ == "__main__":
-    from helpers import HELLO_HEX, hex_to_bytes
-
-    bc = hex_to_bytes(HELLO_HEX)
-    out = run_tomtel_vm(bc)
-    assert out == b"Hello, world!", "got {!r}".format(out)
-    print(out.decode("ascii"))

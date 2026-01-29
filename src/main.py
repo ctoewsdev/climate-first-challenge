@@ -1,8 +1,8 @@
 """
 Entry point for the climate-first coding challenge pipeline.
-Runs layers 0–6 in sequence: the output of one layer becomes the input for the
-next. All serious error handling and traceback printing happen here; the
-orchestrator raises RuntimeErrors with step context.
+Runs layers 0-6 in sequence: the output of one layer becomes the input for the
+next. All handling and traceback printing happen here; the orchestrator raises 
+RuntimeErrors with step context.
 """
 from __future__ import print_function  # Py2/3-safe print(file=...); we use .format() not f-strings
 
@@ -27,6 +27,7 @@ def main(clear=True):
     On any exception, print error + traceback to stderr and exit 1.
     """
     try:
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         if clear:
             print("Clearing output directory...")
             _clear_output_dir()
